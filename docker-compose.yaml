@@ -1,0 +1,43 @@
+services:
+  directus:
+    depends_on:
+      - database
+    image: directus/directus
+    ports:
+      - 8055:8055
+    environment:
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "d1r3ctu5"
+      KEY: "255d861b-5ea1-5996-9aa3-922530ec40b1"
+      SECRET: "6116487b-cda1-52c2-b5b5-c8022c45e263"
+      DB_CLIENT: 'pg'
+      DB_HOST: 'database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'postgres'
+      DB_USER: 'admin'
+      DB_PASSWORD: 'password'
+    networks:
+      - directus
+    volumes:
+      - uploads:/directus/uploads
+  database:
+    volumes:
+      - pandavolume:/var/lib/postgresql/data
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "password"
+    networks:
+      - directus
+networks:
+  directus:
+volumes:
+  pandavolume:
+  uploads:
+
+
+
+
+
