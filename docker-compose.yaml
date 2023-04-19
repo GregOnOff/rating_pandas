@@ -16,10 +16,12 @@ services:
       DB_DATABASE: 'postgres'
       DB_USER: 'admin'
       DB_PASSWORD: 'password'
+      CORS_ENABLED: 'true'
     networks:
       - directus
     volumes:
       - uploads:/directus/uploads
+
   database:
     volumes:
       - pandavolume:/var/lib/postgresql/data
@@ -31,13 +33,10 @@ services:
       POSTGRES_PASSWORD: "password"
     networks:
       - directus
+
 networks:
   directus:
+
 volumes:
   pandavolume:
   uploads:
-
-
-
-
-
