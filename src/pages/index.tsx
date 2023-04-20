@@ -3,7 +3,20 @@ import { Inter } from 'next/font/google'
 import ImageCard from "@/pages/Img_Card";
 import {useState, useEffect} from "react";
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { Directus } from '@directus/sdk';
 const inter = Inter({ subsets: ['latin'] })
+
+const directus = new Directus('http://localhost:8055')
+
+async function publicData() {
+    // GET DATA
+
+    // We don't need to authenticate if the public role has access to some_public_collection.
+    const publicData = await directus.items('pages').readByQuery({ sort: ['id'] });
+
+    console.log(publicData.data);
+}
+publicData()
 
 const client = new ApolloClient({
 
@@ -12,13 +25,6 @@ const client = new ApolloClient({
     credentials: 'include',
 
 });
-
-
-
-
-
-
-
 
 export default function Home() {
     const [directusData, setDirectusData] = useState('')
