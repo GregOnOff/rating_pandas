@@ -16,7 +16,7 @@ export default function ImageCard() {
 
     const [cardData, setcardData] = useState<null | object>(null)
     const fetchCardData = async () => {
-        console.log('panda power!')
+
         try {
             const result = await client.query({
                 query: gql`
@@ -26,7 +26,6 @@ export default function ImageCard() {
                             name_input
                             image {
                                 id
-                                
                             }
                             rating
                             status
@@ -53,19 +52,17 @@ export default function ImageCard() {
 
     return (
         <div>
-            <Image className='rounded-2xl' src={'http://localhost:8055/assets/f63e0ba8-6db6-4eb9-b40e-80a2df77e701'} alt={'img'} width={500} height={500} />
             {cardData?.pages.map((panda) => {
                 return (
                     <div key={panda.id} className='m-20 justify-center bg-amber-50 p-20 rounded-2xl'>
                         <div>Status: {panda.status}</div>
                         <p>Name: {panda.name_input}</p>
                         <p>Cuteness: {panda.rating}</p>
-                        <Image className='rounded-2xl' src={'http://localhost:8055/assets/' + panda.image.id} alt={'img'} width={400} height={400} />
+                        <Image className='rounded-2xl' src={'http://localhost:8055/assets/' + panda.image.id} alt={'img'} width={450} height={450} />
                         <div className='flex justify-end'>
                         <p>{new Date(panda.date_created).toLocaleDateString('de-de', ) } -</p>
                         <p>{new Date(panda.date_created).toLocaleTimeString('de-de', {hour: 'numeric', minute: 'numeric'}) }</p>
                         </div>
-
                     </div>
                 )
             })}
