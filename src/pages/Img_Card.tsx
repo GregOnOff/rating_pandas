@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 import Image from "next/image";
 
-export default function ImageCard() {
-
+export default function ImageCard({directusData: cardData, setDirectusData: setCardData, publicData}) {
+    const [isEditMode, setIsEditMode] = useState(true)
     const imgURL = 'http://localhost:8055/assets/'
 
     const client = new ApolloClient({
@@ -13,59 +13,54 @@ export default function ImageCard() {
         credentials: 'include',
 
     });
+    const [isCardUpdated, setIsCardUpdated] = useState(false);
 
-    const [cardData, setcardData] = useState<null | object>(null)
-    const fetchCardData = async () => {
-
-        try {
-            const result = await client.query({
-                query: gql`
-                    query {
-                        pages{
-                            id
-                            name_input
-                            image {
-                                id
-                            }
-                            rating
-                            status
-                            user_created
-                            date_created
-                        }
-                    }
-                `
-            });
-
-            setcardData(result.data)
-        } catch (error) {
-            console.error(error);
-        }
-
+    const handleRatingRange = (event, panda) => {
+        const updatedPandas = cardData.map((uPanda) => {
+            if (uPanda.id === panda.id) {
+                const updatedPanda = { ...uPanda, rating: event.target.value };
+                setIsCardUpdated(JSON.stringify(updatedPanda) !== JSON.stringify(uPanda));
+                return updatedPanda
+            }
+            return uPanda;
+        });
+        setCardData(updatedPandas);
     };
 
 
-    useEffect(() => {
-        fetchCardData();
-    }, []);
-
-     console.log('http://localhost:8055/assets/' + cardData?.pages[0].image.id)
-
     return (
-        <div>
-            {cardData?.pages.map((panda) => {
+        <div className='grid grid-cols-2'>
+            {cardData?.map((panda) => {
                 return (
                     <div key={panda.id} className='m-20 justify-center bg-amber-50 p-20 rounded-2xl'>
-                        <div>Status: {panda.status}</div>
-                        <p>Name: {panda.name_input}</p>
-                        <p>Cuteness: {panda.rating}</p>
-                        <Image className='rounded-2xl' src={'http://localhost:8055/assets/' + panda.image.id} alt={'img'} width={450} height={450} />
-                        <div className='flex justify-end'>
-                        <p>{new Date(panda.date_created).toLocaleDateString('de-de', ) } -</p>
-                        <p>{new Date(panda.date_created).toLocaleTimeString('de-de', {hour: 'numeric', minute: 'numeric'}) }</p>
-                        </div>
+                    {isEditMode ? (<div>
+
+                        <form>
+
+                        </form>
+                    </div>) :(
+                                <div>
+                                <p>ID: {panda.id}</p>
+                                <p>Name: {panda.name_input}</p>
+                                <p>Cuteness: {panda.rating}</p>
+                                {panda.image ? (
+                                <Image className='rounded-2xl' src={'http://localhost:8055/assets/' + panda.image} alt={'img'} width={450} height={450} />
+                                ) : null }
+                            <div className='flex justify-end'>
+                                <p>{new Date(panda.date_created).toLocaleDateString('de-de', ) } -</p>
+                                <p>{new Date(panda.date_created).toLocaleTimeString('de-de', {hour: 'numeric', minute: 'numeric'}) }</p>
+                            </div>
+                                </div>
+                        )}
+                        <input type={"range"} min={1} max={7} value={panda.rating} onChange={(event) => handleRatingRange(event, panda)}/>
+
                     </div>
+
                 )
             })}
+            <button disabled={!isCardUpdated} onClick={() => console.log('gespeichert')} className='m-4 p-4 bg-amber-100 rounded-2xl'>
+                Speichern
+            </button>
         </div>
     )
 }
