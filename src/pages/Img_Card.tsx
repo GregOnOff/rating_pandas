@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client
 import Image from "next/image";
 
 export default function ImageCard({directusData: cardData, setDirectusData: setCardData, publicData}) {
-    const [isEditMode, setIsEditMode] = useState(true)
+    const [isEditMode, setIsEditMode] = useState(false)
     const imgURL = 'http://localhost:8055/assets/'
 
     const client = new ApolloClient({
@@ -30,16 +30,28 @@ export default function ImageCard({directusData: cardData, setDirectusData: setC
 
     return (
         <div className='grid grid-cols-2'>
-            {cardData?.map((panda) => {
+            {cardData?.map((panda, index) => {
                 return (
                     <div key={panda.id} className='m-20 justify-center bg-amber-50 p-20 rounded-2xl'>
-                    {isEditMode ? (<div>
+                    {isEditMode ? (<div >
 
-                        <form>
+                        <form className='flex-col'>
+                            <div>
+                        <label className='m-2'>New Name</label>
+                            <input/>
+                            </div>
+                        <label> Cuteness lvl:
+                        </label>
+                            <input type={"range"} min={1} max={7} value={panda.rating} onChange={(event) => handleRatingRange(event, panda)}/>
 
                         </form>
+                        <div className='flex justify-between'>
+                        <button className='bg-red-500 p-2 rounded-xl ' onClick={() => setIsEditMode(false)}>cancel</button>
+                        <button className='bg-red-500 p-2 rounded-xl ' type={'submit'}>save</button>
+                        </div>
                     </div>) :(
                                 <div>
+                                    <button className='bg-red-500 p-4 rounded-xl ' onClick={() => setIsEditMode(true)}>Edit</button>
                                 <p>ID: {panda.id}</p>
                                 <p>Name: {panda.name_input}</p>
                                 <p>Cuteness: {panda.rating}</p>
@@ -52,7 +64,6 @@ export default function ImageCard({directusData: cardData, setDirectusData: setC
                             </div>
                                 </div>
                         )}
-                        <input type={"range"} min={1} max={7} value={panda.rating} onChange={(event) => handleRatingRange(event, panda)}/>
 
                     </div>
 
