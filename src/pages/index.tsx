@@ -69,6 +69,7 @@ export default function Home() {
     const formData = new FormData(event.target);
     const name = formData.get("updatedName");
     const id = 1;
+    const rating = formData.get("rating");
 
     const variables = {
       name: name,
@@ -110,6 +111,7 @@ export default function Home() {
       <ImageCard
         directusData={directusData}
         setDirectusData={setDirectusData}
+        publicData={publicData}
       />
     </main>
   );
