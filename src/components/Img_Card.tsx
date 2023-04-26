@@ -124,7 +124,6 @@ export default function ImageCard({
                 >
                   Edit
                 </button>
-                <p>ID: {panda.id}</p>
                 <p>Name: {panda.name_input}</p>
                 <p>Cuteness: {panda.rating}</p>
                 {panda.image ? (

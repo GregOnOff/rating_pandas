@@ -8,6 +8,7 @@ export default function PandaForm({
   directusData: cardData,
   setDirectusData: setCardData,
   publicData,
+  setAddIsOn,
 }) {
   const [ratingValue, setRatingValue] = useState(3);
 
@@ -50,7 +51,7 @@ export default function PandaForm({
   };
 
   return (
-    <div className="grid grid-cols-1">
+    <div className="flex justify-center align-top p-4 bg-green-200 rounded-xl ">
       <form className="flex-col" onSubmit={(event) => saveUpdatedData(event)}>
         <div>
           <label className="m-2">New Name</label>
@@ -67,6 +68,7 @@ export default function PandaForm({
             type={"range"}
             min={1}
             max={7}
+            value={3}
             onChange={(event) => handleRatingRange(event)}
           />
           <p>{ratingValue}</p>
@@ -74,7 +76,7 @@ export default function PandaForm({
         <div className="flex justify-between">
           <button
             className="bg-red-500 p-2 rounded-xl "
-            onClick={() => console.log("close add option")}
+            onClick={() => setAddIsOn(false)}
           >
             cancel
           </button>
