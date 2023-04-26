@@ -26,6 +26,8 @@ export default function PandaForm({
     console.log(Object.fromEntries(formData));
     const name = formData.get("updatedName");
     const rating = formData.get("range");
+    const img = formData.get("imgUpload");
+    console.log(new FileReader());
 
     const variables = {
       name: name,
@@ -48,6 +50,7 @@ export default function PandaForm({
       .items(updateDataMutation, variables)
       .catch((error) => console.error(error + "hahlp!"));
     publicData();
+    setAddIsOn(false);
   };
 
   return (
@@ -59,6 +62,14 @@ export default function PandaForm({
             type={"text"}
             name={"updatedName"}
             placeholder={"what's your pandas name?"}
+            required={true}
+            pattern="^[a-zA-Z]*y$"
+            onInvalid={(event) =>
+              event.target.setCustomValidity(
+                "Bitte wähle einen Namen der auf 'y' endet."
+              )
+            }
+            onChange={(event) => event.target.setCustomValidity("")}
           />
         </div>
         <div className="flex gap-3">
@@ -68,10 +79,14 @@ export default function PandaForm({
             type={"range"}
             min={1}
             max={7}
-            value={3}
+            defaultValue={3}
             onChange={(event) => handleRatingRange(event)}
           />
           <p>{ratingValue}</p>
+        </div>
+        <div>
+          <label>Upload</label>
+          <input name={"imgUpload"} type={"file"} required={false} />
         </div>
         <div className="flex justify-between">
           <button
