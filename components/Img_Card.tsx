@@ -152,13 +152,6 @@ export default function ImageCard({
           </div>
         );
       })}
-      <button
-        disabled={!isCardUpdated}
-        onClick={() => console.log("gespeichert")}
-        className="m-4 p-4 bg-amber-100 rounded-2xl"
-      >
-        Speichern
-      </button>
     </div>
   );
 }
