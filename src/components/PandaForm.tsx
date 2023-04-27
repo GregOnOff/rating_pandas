@@ -11,6 +11,7 @@ export default function PandaForm({
   setAddIsOn,
 }) {
   const [ratingValue, setRatingValue] = useState(3);
+  const [imageToUpload, setImageToUpload] = useState(null);
 
   const directus = new Directus("http://localhost:8055");
 
@@ -19,7 +20,7 @@ export default function PandaForm({
     setRatingValue(ratingVal);
   };
 
-  const saveUpdatedData = async (event) => {
+  const saveNewPandaData = async (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
@@ -53,9 +54,30 @@ export default function PandaForm({
     setAddIsOn(false);
   };
 
+  const handleFileInput = (event) => {
+    console.log(event.target.files[0]);
+    setImageToUpload(event.target.files[0]);
+  };
+
+  console.log(directus.graphql.items);
+  const handleImageUpload = (event) => {
+    event.preventDefault();
+    directus.graphql.items
+      .createOne({
+        data: imageToUpload,
+        storage: "pages",
+      })
+      .then((response) => {
+        console.log("Upload erfolgreich:", response);
+      })
+      .catch((error) => {
+        console.error("Upload fehlgeschlagen:", error);
+      });
+  };
+
   return (
     <div className="flex justify-center align-top p-4 bg-green-200 rounded-xl ">
-      <form className="flex-col" onSubmit={(event) => saveUpdatedData(event)}>
+      <form className="flex-col" onSubmit={(event) => handleImageUpload(event)}>
         <div>
           <label className="m-2">New Name</label>
           <input
@@ -86,7 +108,12 @@ export default function PandaForm({
         </div>
         <div>
           <label>Upload</label>
-          <input name={"imgUpload"} type={"file"} required={false} />
+          <input
+            name={"imgUpload"}
+            type={"file"}
+            required={false}
+            onChange={handleFileInput}
+          />
         </div>
         <div className="flex justify-between">
           <button
