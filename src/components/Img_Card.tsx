@@ -53,7 +53,7 @@ export default function ImageCard({
     
     `;
 
-    const mutateData = await directus.graphql
+    await directus.graphql
       .items(updateDataMutation, variables)
       .catch((error) => console.error(error + "hahlp!"));
     publicData();

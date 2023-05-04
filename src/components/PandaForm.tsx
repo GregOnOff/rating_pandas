@@ -4,6 +4,8 @@ import { Directus, ID } from "@directus/sdk";
 import * as crypto from "crypto";
 import FormData from "form-data";
 import { randomUUID } from "crypto";
+import { json } from "stream/consumers";
+import { images } from "next/dist/build/webpack/config/blocks/images";
 export default function PandaForm({
   directusData: cardData,
   setDirectusData: setCardData,
@@ -20,20 +22,54 @@ export default function PandaForm({
     setRatingValue(ratingVal);
   };
 
-  const saveNewPandaData = async (event) => {
+  const handleFileInput = (event) => {
+    setImageToUpload(event.target.files[0]);
+  };
+  // Upload Image
+  const handleImageUpload = (event) => {
+    event.preventDefault();
+    let formdata = new FormData();
+    formdata.append("title", "name");
+    formdata.append("folder", "f844e100-6b43-4c60-a9a6-961a82ee4de9");
+    formdata.append("file", imageToUpload);
+
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+    // Get Image ID inside Directus files 'folder'
+
+    fetch("http://localhost:8055/files", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        const imgData = JSON.parse(result);
+        const latestImageId = imgData.data.id;
+        console.log(imgData.data.id);
+        saveNewPandaData(event, latestImageId);
+      })
+      .catch((error) => console.log("error", error));
+    // publicData();
+    // setAddIsOn(false);
+    // console.log(event);
+  };
+
+  const saveNewPandaData = async (event, latestImageId) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
     console.log(Object.fromEntries(formData));
     const name = formData.get("updatedName");
     const rating = formData.get("range");
-    const img = formData.get("imgUpload");
-    console.log(new FileReader());
+    console.log(formData);
+    console.log(rating, name);
 
     const variables = {
       name: name,
       rating: rating,
     };
+
+    console.log(variables);
 
     const updateDataMutation = `
             mutation createPagesItem( $name: String!, $rating: JSON! ){
@@ -41,43 +77,54 @@ export default function PandaForm({
                     id
                     name_input
                     rating
-                    
-                }
+
+              }
             }
-    
     `;
 
-    const newDataEntry = await directus.graphql
-      .items(updateDataMutation, variables)
-      .catch((error) => console.error(error + "hahlp!"));
-    publicData();
-    setAddIsOn(false);
+    const newEntryData = await directus.graphql.items(
+      updateDataMutation,
+      variables
+    );
+    const latestId = newEntryData.data.create_pages_item.id;
+
+    mergeImageAndData(latestId, latestImageId);
   };
 
-  const handleFileInput = (event) => {
-    console.log(event.target.files[0]);
-    setImageToUpload(event.target.files[0]);
+  const mergeImageAndData = async (latestId: number, latestImageId: string) => {
+    const imgVariables = {
+      id: latestId,
+      image: latestImageId,
+    };
+    console.log(imgVariables);
+
+    const updateImageAtEntry = `
+        mutation updatePagesItem($id : ID!, $image: String!){
+                    update_pages_item( id: $id , data: {image: $image}) {
+                       image{
+                            id
+                        }
+
+
+                }
+    }
+        `;
+
+    const updatedNewEntry = await directus.graphql.items(
+      updateImageAtEntry,
+      imgVariables
+    );
   };
 
-  console.log(directus.graphql.items);
-  const handleImageUpload = (event) => {
-    event.preventDefault();
-    directus.graphql.items
-      .createOne({
-        data: imageToUpload,
-        storage: "pages",
-      })
-      .then((response) => {
-        console.log("Upload erfolgreich:", response);
-      })
-      .catch((error) => {
-        console.error("Upload fehlgeschlagen:", error);
-      });
-  };
+  // console.log(cardData);
 
   return (
     <div className="flex justify-center align-top p-4 bg-green-200 rounded-xl ">
-      <form className="flex-col" onSubmit={(event) => handleImageUpload(event)}>
+      <form
+        className="flex-col"
+        encType={"multipart/form-data"}
+        onSubmit={(event) => handleImageUpload(event)}
+      >
         <div>
           <label className="m-2">New Name</label>
           <input
@@ -111,7 +158,7 @@ export default function PandaForm({
           <input
             name={"imgUpload"}
             type={"file"}
-            required={false}
+            required={true}
             onChange={handleFileInput}
           />
         </div>
