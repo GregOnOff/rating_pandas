@@ -1,8 +1,7 @@
 import { Inter } from "next/font/google";
 import ImageCard from "@/components/Img_Card";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
-import { Directus, ID } from "@directus/sdk";
 import PandaForm from "@/components/PandaForm";
 const inter = Inter({ subsets: ["latin"] });
 
