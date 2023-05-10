@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { Button } from "@mui/material";
 import ImageCard from "@/components/Img_Card";
 import { useEffect } from "react";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import PandaForm from "@/components/PandaForm";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home({
+  directus,
   directusData,
   setDirectusData,
   publicData,
@@ -22,16 +24,16 @@ export default function Home({
       {!addIsOn ? (
         <div>
           <Link href={"/rating"}>
-            <button className="rounded-2xl bg-gray-400 p-4 m-1 hover:scale-90">
+            <Button className="rounded-2xl bg-gray-400 p-4 m-1 hover:scale-90">
               Rate Pandas
-            </button>
+            </Button>
           </Link>
-          <button
+          <Button
             className="rounded-2xl bg-gray-400 p-4 m-1 hover:scale-90"
             onClick={() => setAddIsOn(true)}
           >
             Add new Panda
-          </button>
+          </Button>
         </div>
       ) : null}
       {addIsOn ? (
@@ -43,6 +45,7 @@ export default function Home({
         />
       ) : (
         <ImageCard
+          directus={directus}
           directusData={directusData}
           setDirectusData={setDirectusData}
           publicData={publicData}

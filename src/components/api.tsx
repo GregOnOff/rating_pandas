@@ -1,11 +1,15 @@
 import { Directus } from "@directus/sdk";
 import FormData from "form-data";
-import newEntry from "@/components/newEntry";
 
 const API_ENDPOINT = "http://localhost:8055";
 const directus = new Directus(API_ENDPOINT);
 
-export async function uploadImage(event, imageToUpload, imageProvidingFolder) {
+export async function uploadImage(
+  event,
+  imageToUpload,
+  imageProvidingFolder,
+  publicData
+) {
   const formdata = new FormData();
   formdata.append("title", imageToUpload.name);
   formdata.append("folder", imageProvidingFolder);
@@ -74,4 +78,5 @@ export async function uploadImage(event, imageToUpload, imageProvidingFolder) {
   } catch (error) {
     console.log("error", error);
   }
+  publicData();
 }

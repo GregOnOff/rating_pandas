@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Directus, ID } from "@directus/sdk";
 import FormData from "form-data";
+import { Button } from "@mui/material";
 export default function ImageCard({
+  directus,
   directusData: cardData,
   setDirectusData: setCardData,
   publicData,
 }) {
   const [isInEditMode, setIsInEditMode] = useState<number[]>([]);
   const [isCardUpdated, setIsCardUpdated] = useState(false);
-
-  const directus = new Directus("http://localhost:8055");
 
   const handleRatingRange = (event, panda) => {
     const updatedPandas = cardData.map((uPanda) => {
@@ -101,29 +101,29 @@ export default function ImageCard({
                     <p>{panda.rating}</p>
                   </div>
                   <div className="flex justify-between">
-                    <button
+                    <Button
                       className="bg-red-500 p-2 rounded-xl "
                       onClick={() => closeEditForm(panda.id)}
                     >
                       cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       className="bg-red-500 p-2 rounded-xl "
                       type={"submit"}
                     >
                       save
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
             ) : (
               <div>
-                <button
+                <Button
                   className="bg-red-500 p-4 rounded-xl "
                   onClick={() => openEditForm(panda.id)}
                 >
                   Edit
-                </button>
+                </Button>
                 <p>Name: {panda.name_input}</p>
                 <p>Cuteness: {panda.rating}</p>
                 {panda.image ? (
